@@ -1,0 +1,5015 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Documentation",
+    "description": "API Documentation for the API",
+    "version": "2.27.3"
+  },
+  "host": "",
+  "basePath": "",
+  "paths": {
+    "/v1/admin/refresh-marketing-tags-for-user/{userId}": {
+      "post": {
+        "summary": "Refresh marketing tags",
+        "description": "Refresh user marketing tags for given id",
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "123e4567-e89b-12d3-a456-426655440000"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User has been refreshed successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/v1/admin/refresh-marketing-tags-for-users": {
+      "post": {
+        "summary": "Refresh marketing tags",
+        "description": "Refresh users marketing tags for given ids",
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "description": "List of users ids",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "123e4567-e89b-12d3-a456-426655440000"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Users has been refreshed successfully"
+          },
+          "404": {
+            "description": "Users not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/v1/admin/get-billing-user-list": {
+      "get": {
+        "summary": "Get billing user list",
+        "description": "Get all users that need to be billed. Trigger an email to the billing team.",
+        "tags": [
+          "Admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "Billing user list sent to billing team"
+          }
+        }
+      }
+    },
+    "/v1/admin/import-user-marketing-tags-from-mailchimp": {
+      "post": {
+        "summary": "Import user marketing tags from mailchimp",
+        "description": "Import user marketing tags from mailchimp. This fetch all users from mailchimp and update their tags in the database.",
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "application",
+            "in": "query",
+            "description": "Application name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "synapse"
+            }
+          },
+          {
+            "name": "pageIndex",
+            "in": "query",
+            "description": "Page index. Can be use to start fetching users from a specific page. This will be useful in case of error during the import.",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User marketing tags imported successfully"
+          }
+        }
+      }
+    },
+    "/v1/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Authenticate a user for a given application",
+        "tags": [
+          "Login"
+        ],
+        "requestBody": {
+          "description": "User credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCredentials"
+              },
+              "example": {
+                "email": "user@mail.com",
+                "password": "password",
+                "application": "synapse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated"
+          },
+          "401": {
+            "description": "Authentication failed"
+          },
+          "403": {
+            "description": "User exists but need to validate email before trying to log in"
+          }
+        }
+      }
+    },
+    "/v1/client-application": {
+      "post": {
+        "summary": "Create Client Application",
+        "description": "Create Client Application",
+        "tags": [
+          "ClientApplication"
+        ],
+        "requestBody": {
+          "description": "Client application to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveClientApplication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Client application created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientApplication"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Client application already in database"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Client Application",
+        "description": "Update Client Application",
+        "tags": [
+          "ClientApplication"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientApplicationId"
+          }
+        ],
+        "requestBody": {
+          "description": "Client application to update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveClientApplication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Client application created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientApplication"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client application not found"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Client Applications",
+        "description": "Get Client Applications",
+        "tags": [
+          "ClientApplication"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageIndex"
+          },
+          {
+            "$ref": "#/components/parameters/Application"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of Client Application",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientApplicationList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/client-application/{clientApplicationId}/secret": {
+      "get": {
+        "summary": "Get a client secret from Keycloak",
+        "description": "Get Client Applications",
+        "tags": [
+          "ClientApplication"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientApplicationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client secret object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "secret"
+                    },
+                    "value": {
+                      "type": "string",
+                      "example": "somethingsomethingsomething"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client application not found (either in database or in Keycloak)"
+          }
+        }
+      }
+    },
+    "/v1/client-application/{clientApplicationId}/licenses": {
+      "get": {
+        "summary": "get licenses of a given client application",
+        "description": "get licenses of a given client application",
+        "tags": [
+          "ClientApplication"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientApplicationId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of licenses associated to given client application",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/License"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "License not found"
+          }
+        }
+      }
+    },
+    "/v1/code": {
+      "get": {
+        "summary": "Get codes",
+        "description": "Get all code summaries",
+        "tags": [
+          "Code"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageIndex"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Order"
+          },
+          {
+            "$ref": "#/components/parameters/Application"
+          },
+          {
+            "in": "query",
+            "name": "code",
+            "description": "Code value",
+            "schema": {
+              "type": "string",
+              "example": 123456
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "Free text search on the fields [code]",
+            "schema": {
+              "type": "string",
+              "example": 123456
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of codes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request due to invalid arguments (psize and pidx need to be positive integers)"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create code",
+        "description": "Create a new code",
+        "tags": [
+          "Code"
+        ],
+        "requestBody": {
+          "description": "Code to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Code"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Application not found"
+          },
+          "409": {
+            "description": "Code already in database"
+          }
+        }
+      }
+    },
+    "/v1/code/{codeId}": {
+      "get": {
+        "summary": "Get code",
+        "description": "Get code by id",
+        "tags": [
+          "Code"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "codeId",
+            "description": "Code identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426655440000"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Code detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Code"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Code not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update code",
+        "description": "Update an existing code",
+        "tags": [
+          "Code"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "codeId",
+            "description": "Code identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426655440000"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Code to update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Code"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Code not found"
+          }
+        }
+      }
+    },
+    "/v1/event-admin/link-lap-user/{userId}/{clientApplicationId}": {
+      "post": {
+        "summary": "Add a client application link to a user.",
+        "tags": [
+          "EventAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client application added to user."
+          },
+          "404": {
+            "description": "User or client application not found."
+          },
+          "409": {
+            "description": "User already linked to the client application."
+          }
+        }
+      }
+    },
+    "/v1/event-admin/unlink-lap-user/{userId}/{clientApplicationId}": {
+      "delete": {
+        "summary": "Delete a client application link from a user.",
+        "tags": [
+          "EventAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientApplicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client application deleted from user."
+          },
+          "404": {
+            "description": "User or client application not found."
+          }
+        }
+      }
+    },
+    "/v1/event-admin/lap-user/{userId}/tags/update": {
+      "put": {
+        "summary": "Update a user's tags",
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Tags list.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "clientApplication": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User tags updated."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      }
+    },
+    "/partner/v1/primary-user/subscribe": {
+      "post": {
+        "summary": "DEPRECATED Create a subscription for a primary user.",
+        "description": "Create a subscription for a primary user. Will create a Synapse user if the user_id does not exists yet. Deprecated. Please use /partner/v2/primary-user/subscribe",
+        "tags": [
+          "Partner"
+        ],
+        "requestBody": {
+          "description": "Primary user and subscription information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSynapseWidgetSubscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user was succesfully subscribed. The response includes the newly created subscription IDs for future operations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The user was succesfully subscribed."
+                    },
+                    "subscriptionId": {
+                      "type": "string"
+                    },
+                    "trialSubscriptionId": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request body is invalid or is missing some required fields."
+          },
+          "401": {
+            "description": "The request did not provide a valid api key or token."
+          },
+          "404": {
+            "descriptipon": "Some licenses or the client was not found."
+          },
+          "409": {
+            "description": "The user id is already used, or the email is already used by another user."
+          }
+        }
+      }
+    },
+    "/partner/v1/primary-user/unsubscribe": {
+      "post": {
+        "summary": "End a primary user's subscription.",
+        "description": "End a primary user's subscription. Will set the end date to the given date (defaults to now), and terminate all attachments that had this user as the primary user.",
+        "tags": [
+          "Partner"
+        ],
+        "requestBody": {
+          "description": "Subscription ending information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSynapseWidgetTermination"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user has been successfully unsubscribed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The user was succesfully unsubscribed."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request body is invalid or is missing some required fields."
+          },
+          "401": {
+            "description": "The request did not provide a valid api key or token."
+          },
+          "404": {
+            "description": "The user or the client was not found or no cancellable subscriptions found"
+          }
+        }
+      }
+    },
+    "/partner/v1/secondary-user/subscribe": {
+      "post": {
+        "summary": "Attach a secondary user to a primary user.",
+        "description": "Attach a secondary user to a primary user for a specific time period.",
+        "tags": [
+          "Partner"
+        ],
+        "requestBody": {
+          "description": "Attachment information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSynapseWidgetAttachment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user was succesfully attached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The user was succesfully attached."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request body is invalid or is missing some required fields."
+          },
+          "401": {
+            "description": "The request did not provide a valid api key or token."
+          },
+          "404": {
+            "description": "The primary user, the client or some licenses were not found."
+          },
+          "409": {
+            "description": "The user is already attached to the primary user, or the maximum number of attachments is reached for the given primary user."
+          }
+        }
+      }
+    },
+    "/partner/v1/secondary-user/unsubcribe": {
+      "post": {
+        "summary": "End a secondary user's attachment.",
+        "description": "End a secondary user's attachment to a primary user.",
+        "tags": [
+          "Partner"
+        ],
+        "requestBody": {
+          "description": "Detachment information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSynapseWidgetDetachment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user was succesfully dettached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The user was succesfully dettached."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request body is invalid or is missing some required fields."
+          },
+          "401": {
+            "description": "The request did not provide a valid api key or token."
+          },
+          "404": {
+            "description": "One of the users (primary or secondary) or the client was not found, or the users are not attached."
+          }
+        }
+      }
+    },
+    "/partner/v1/{userType}/{userId}/subscription": {
+      "get": {
+        "summary": "Get the subscriptions of a user",
+        "tags": [
+          "Partner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User's identifier in your system, must be unique.",
+              "example": 123456789
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's subscriptions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LapUserSubscription"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request body is invalid or is missing some required fields."
+          },
+          "401": {
+            "description": "The request did not provide a valid api key or token."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      }
+    },
+    "/partner/v1/{userType}/{userId}/attachment": {
+      "get": {
+        "summary": "Get the attachments of a user",
+        "description": "Get the attachments of a user. Can returns all the attachments of a user as the primary or secondary user. Throws a 404 is either the primary or secondary user is not found.",
+        "tags": [
+          "Partner"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LapUserType"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User's identifier in your system, must be unique.",
+              "example": 123456789
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's attachments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LapUserAttachment"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      }
+    },
+    "/partner/v1/primary-user/{userId}/subscription/{subscriptionId}": {
+      "put": {
+        "summary": "Update a subscription",
+        "description": "If subscriptionId is provided, update the specified subscription. Otherwise, update the currently active subscription.",
+        "tags": [
+          "Partner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User's identifier in your system, must be unique.",
+              "example": 123456789
+            }
+          },
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "schema": {
+              "type": "string",
+              "description": "Subscription's identifier.",
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Subscription update information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSynapseWidgetSubscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The subscription was succesfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LapUserSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid."
+          },
+          "404": {
+            "description": "The user or the subscription was not found."
+          }
+        }
+      }
+    },
+    "/partner/v1/{userId}": {
+      "get": {
+        "summary": "Get a user by its id",
+        "description": "Get a user's information by its id.",
+        "tags": [
+          "Partner"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LapUserType"
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User's identifier in your system, must be unique.",
+              "example": 123456789
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LapUser"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User or client not found."
+          }
+        }
+      }
+    },
+    "/partner/v1/{userId}/update": {
+      "put": {
+        "summary": "Update a user",
+        "description": "Update a user's information. Assumes that the update user object is complete, to guarantee idempotency.",
+        "tags": [
+          "Partner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User's identifier in your system, must be unique.",
+              "example": 123456789
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "User update information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLapUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user was succesfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LapUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid or missing some required fields."
+          },
+          "404": {
+            "description": "The user was not found."
+          }
+        }
+      }
+    },
+    "/partner/v1/{userId}/tags/update": {
+      "put": {
+        "summary": "Update a user's tags",
+        "description": "Update a user's tags. Will replace the user's tags with the given ones.",
+        "tags": [
+          "Partner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "User's identifier in your system, must be unique.",
+              "example": 123456789
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "User tags information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "tag1"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user tags were succesfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "description": "Operation status",
+                      "type": "string"
+                    },
+                    "details": {
+                      "description": "List of the updated tags",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid or missing some required fields."
+          },
+          "404": {
+            "description": "The user was not found."
+          }
+        }
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Simple health check that should answer 200 to the caller.",
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/v1/.well-known": {
+      "get": {
+        "summary": "End to end health check",
+        "description": "End to end health check",
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/keycloak/user-subscriptions": {
+      "get": {
+        "summary": "Get user subscriptions",
+        "description": "Get user subscriptions for keycloak, using client ids.",
+        "tags": [
+          "KeycloakV1"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "user_id",
+            "required": true,
+            "description": "User id",
+            "schema": {
+              "type": "string",
+              "example": 123456
+            }
+          },
+          {
+            "in": "query",
+            "name": "client_id",
+            "required": true,
+            "description": "Client id (from keycloak)",
+            "schema": {
+              "type": "string",
+              "example": 123456
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LapUserSubscription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found. This error shoud be handle by keycloak (in a lenient way)"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create or update a user subscription",
+        "description": "Create or update a user subscription. This endpoint is used by Keycloak to create or update a user subscription when the user is created or updated in Keycloak.",
+        "tags": [
+          "KeycloakV1"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SaveSynapseWidgetSubscriptionV2"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "clientId": {
+                        "type": "string",
+                        "description": "Client id (from Keycloak). Champ requis pour l'API Keycloak.",
+                        "example": "123456"
+                      }
+                    },
+                    "required": [
+                      "clientId"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user was successfully subscribed. The response includes the newly created subscription for future operations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LapUserSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request body is invalid or is missing some required fields."
+          },
+          "401": {
+            "description": "The request did not provide a valid API key or token."
+          },
+          "404": {
+            "description": "Some licenses or the client was not found."
+          },
+          "409": {
+            "description": "The user ID is already used, or the email is already used by another user."
+          }
+        }
+      }
+    },
+    "/v1/keycloak/unknown-user": {
+      "get": {
+        "summary": "Get unknown users",
+        "description": "Get the list of unknown users from the database. Unknown users are users that were asked a token for without being subscribed to the LAP.",
+        "tags": [
+          "KeycloakV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageIndex"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of unknown users with pagination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "number",
+                      "example": 12
+                    },
+                    "results": {
+                      "type": "array",
+                      "description": "List of unknown users",
+                      "items": {
+                        "$ref": "#/components/schemas/UnknownUser"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown user not found"
+          }
+        }
+      }
+    },
+    "/v1/keycloak/unknown-user/{userId}": {
+      "get": {
+        "summary": "Get unknown user",
+        "description": "Get a unknown user id from the database. Unknown users are users that were asked a token for without being subscribed to the LAP.",
+        "tags": [
+          "KeycloakV1"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "description": "User id",
+            "schema": {
+              "type": "string",
+              "example": 123456
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unknown user found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "string",
+                      "example": 123456
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown user not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete unknown user",
+        "description": "Delete a unknown user id from the database.",
+        "tags": [
+          "KeycloakV1"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "description": "User id",
+            "schema": {
+              "type": "string",
+              "example": 123456
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unknown user deleted"
+          },
+          "404": {
+            "description": "Unknown user not found"
+          }
+        }
+      }
+    },
+    "/v1/license": {
+      "get": {
+        "summary": "Get licenses",
+        "description": "Get licenses",
+        "tags": [
+          "License"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageIndex"
+          },
+          {
+            "$ref": "#/components/parameters/Application"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of licenses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new license",
+        "description": "Create a new license",
+        "tags": [
+          "License"
+        ],
+        "requestBody": {
+          "description": "New license description",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveLicense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The newly created license",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/License"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Marketing tag not found"
+          }
+        }
+      }
+    },
+    "/v1/license/{licenseId}": {
+      "get": {
+        "summary": "Get license by id",
+        "description": "Get license by id",
+        "tags": [
+          "License"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "licenseId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "License identifier",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "License detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/License"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "License not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a license",
+        "description": "Update a license",
+        "tags": [
+          "License"
+        ],
+        "requestBody": {
+          "description": "license data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveLicense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated license",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/License"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "License or marketing tag not found"
+          }
+        }
+      }
+    },
+    "/v1/license/{licenseId}/clientApplications": {
+      "get": {
+        "summary": "Get client applications with access to requested license",
+        "description": "Get client applications with access to requested license",
+        "tags": [
+          "License"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "licenseId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "License identifier",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of client application with access to requested license",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClientApplication"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "License not found"
+          }
+        }
+      }
+    },
+    "/v1/license/{licenseId}/clientApplications/{clientApplicationId}": {
+      "put": {
+        "summary": "Add a link between a license and a client application",
+        "description": "Add a link between a license and a client application",
+        "tags": [
+          "License"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "licenseId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "License identifier",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clientApplicationId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Client application identifier",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of client application with access to requested license",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClientApplication"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "License or client application not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a link between a license and a client application",
+        "description": "Delete a link between a license and a client application",
+        "tags": [
+          "License"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "licenseId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "License identifier",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clientApplicationId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Client application identifier",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of client application with access to requested license",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClientApplication"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "License or client application not found"
+          }
+        }
+      }
+    },
+    "/v1/marketing-tag": {
+      "get": {
+        "summary": "Get marketing tags",
+        "description": "Get marketing tags",
+        "tags": [
+          "MarketingTag"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageIndex"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of marketing tags",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketingTagList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/marketing-tag/{marketingTagId}": {
+      "get": {
+        "summary": "Get marketing tag by id",
+        "description": "Get marketing tag by id",
+        "tags": [
+          "MarketingTag"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "marketingTagId",
+            "description": "Marketing tag identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Marketing tag details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketingTag"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Marketing tag not found"
+          }
+        }
+      }
+    },
+    "/v1/profession": {
+      "get": {
+        "summary": "Get professions",
+        "description": "Get the list of all professions",
+        "tags": [
+          "Profession"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageIndex"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of professions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfessionList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/profession/{professionId}": {
+      "get": {
+        "summary": "Get profession",
+        "description": "Get profession by id",
+        "tags": [
+          "Profession"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "professionId",
+            "description": "Profession identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profession detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profession"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profession not found"
+          }
+        }
+      }
+    },
+    "/v1/user": {
+      "get": {
+        "summary": "Get users",
+        "description": "Get user summaries",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageIndex"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Order"
+          },
+          {
+            "$ref": "#/components/parameters/Application"
+          },
+          {
+            "$ref": "#/components/parameters/Email"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users matching filter, sort, page size and page index)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request due to invalid arguments (psize and pidx need to be positive integers)."
+          }
+        }
+      },
+      "post": {
+        "summary": "Create user",
+        "description": "Create a new user",
+        "tags": [
+          "UserV1"
+        ],
+        "requestBody": {
+          "description": "User to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request due to invalid arguments (body is not a SaveUser)."
+          },
+          "409": {
+            "description": "Email already in database."
+          },
+          "422": {
+            "description": "Unprocessable Entity : incorrect application, registration code, profession, speciality or sub speciality."
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}": {
+      "get": {
+        "summary": "Get user",
+        "description": "Get user detail by id",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user",
+        "description": "Update a user by id",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "description": "User to update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "422": {
+            "description": "Unprocessable Entity : incorrect profession, speciality or sub speciality."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user",
+        "description": "Delete a user by id",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted successfully."
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/password": {
+      "put": {
+        "summary": "Update user password",
+        "description": "Update a user password by id",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "description": "User password to update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserPasswordV1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "User password updated successfully."
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/subscription": {
+      "get": {
+        "summary": "Get user subscriptions",
+        "description": "Get subscriptions for a specific user. Can be filtered by license names. Providing a license name will return any subscription that has the provided license (greedy).",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          },
+          {
+            "in": "query",
+            "name": "license",
+            "description": "License name to filter subscriptions with.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "license1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Summaries of the user's subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SubscriptionSummary"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/subscription/{subscriptionId}": {
+      "get": {
+        "summary": "Get user subscriptions",
+        "description": "Get subscriptions for a specific user",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          },
+          {
+            "$ref": "#/components/parameters/SubscriptionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User or subscription not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user subscription",
+        "description": "Update a user subscription",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          },
+          {
+            "$ref": "#/components/parameters/SubscriptionId"
+          }
+        ],
+        "requestBody": {
+          "description": "Subscription to update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Cannot update a subscription with a type that is not \"non-renewing\""
+          },
+          "404": {
+            "description": "User or subscription not found"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/subscription/in-app-purchase": {
+      "post": {
+        "summary": "Validate user in-app purchase subscription",
+        "description": "Validate an in-app purchase subscription for a specific user",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "description": "In-app purchase to validate",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateInAppPurchasedSubscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription validated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User, license or platform not found"
+          },
+          "409": {
+            "description": "In-app purchase already linked to an other user"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/redeemed-code": {
+      "get": {
+        "summary": "Get user redeemed codes",
+        "description": "Get redeemed codes for a specific user",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user redeemed code summaries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RedeemedCodeSummary"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Redeem a code",
+        "description": "Redeem a code for a specific user",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "description": "Code to redeem",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code redeemed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedeemedCode"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Code cannot be redeemed as of now."
+          },
+          "404": {
+            "description": "User or code not found"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/subscription/non-renewing": {
+      "post": {
+        "summary": "Create user subscription",
+        "description": "Create a new non renewing subscription for a specific user",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "description": "Subscription to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSubscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "License's application does not match user's application"
+          },
+          "404": {
+            "description": "User or license not found"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/marketing-tag/{marketingTagId}": {
+      "post": {
+        "summary": "Create user marketing tag",
+        "description": "Create a new static marketing tag linked to the user",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          },
+          {
+            "$ref": "#/components/parameters/MarketingTagId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User tag association created successfully."
+          },
+          "404": {
+            "description": "User or marketing tag not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user marketing tag",
+        "description": "Delete an existing static marketing tag linked to user",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          },
+          {
+            "$ref": "#/components/parameters/MarketingTagId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User tag association deleted successfully."
+          },
+          "404": {
+            "description": "User tag association not found"
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/email-validation/{token}": {
+      "post": {
+        "summary": "Handles user email validation",
+        "description": "Handles user email validation",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          },
+          {
+            "$ref": "#/components/parameters/TokenValue"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User has successfully validated their email.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User or token not found."
+          },
+          "498": {
+            "description": "Token has expired or is invalid. A new email will be sent."
+          }
+        }
+      }
+    },
+    "/v1/user/{userId}/email-validation-request": {
+      "post": {
+        "summary": "Request an user email validation",
+        "description": "Request an user email validation",
+        "tags": [
+          "UserV1"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Validation email has successfully been sended back."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      }
+    },
+    "/partner/v2/primary-user/subscribe": {
+      "post": {
+        "summary": "Create a subscription for a primary user.",
+        "description": "Create a subscription for a primary user. Will create a Synapse user if the user_id does not exist yet.",
+        "tags": [
+          "Partner"
+        ],
+        "requestBody": {
+          "description": "Primary user and subscription information.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveSynapseWidgetSubscriptionV2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user was successfully subscribed. The response includes the newly created subscription for future operations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LapUserSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request body is invalid or is missing some required fields."
+          },
+          "401": {
+            "description": "The request did not provide a valid API key or token."
+          },
+          "404": {
+            "description": "Some licenses or the client was not found."
+          },
+          "409": {
+            "description": "The user ID is already used, or the email is already used by another user."
+          }
+        }
+      }
+    },
+    "/v2/password-recovery": {
+      "post": {
+        "summary": "Initiate password recovery",
+        "description": "Initiate password recovery with link and token",
+        "tags": [
+          "PasswordRecoveryV2"
+        ],
+        "requestBody": {
+          "description": "Password recovery to initiate",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiatePasswordRecovery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password recovery initiated successfully."
+          },
+          "404": {
+            "description": "Application or email template not found."
+          }
+        }
+      }
+    },
+    "/v2/password-recovery/{recoveryToken}": {
+      "post": {
+        "summary": "Recover password",
+        "description": "Password recovery with a token",
+        "tags": [
+          "PasswordRecoveryV2"
+        ],
+        "parameters": [
+          {
+            "name": "recoveryToken",
+            "in": "path",
+            "description": "Recovery token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": 426655440000
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Password recovery to initiate",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordRecovery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Password recovered successfully."
+          },
+          "404": {
+            "description": "Token not found."
+          }
+        }
+      }
+    },
+    "/v2/user/{userId}/password": {
+      "put": {
+        "summary": "Update user password",
+        "description": "Update user password using the new version of the API (token based)",
+        "tags": [
+          "UserV2"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserId"
+          }
+        ],
+        "requestBody": {
+          "description": "User password to update",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserPasswordV2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "User password updated successfully."
+          },
+          "400": {
+            "description": "Current password and new password are the same."
+          },
+          "401": {
+            "description": "Current password is invalid."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UnknownUser": {
+        "type": "object",
+        "description": "An unknown user"
+      },
+      "CodeType": {
+        "type": "string",
+        "enum": [
+          "promotional",
+          "partner"
+        ]
+      },
+      "LanguageCultureCode": {
+        "type": "string",
+        "description": "All language culture codes (ISO 639x but more user friendly).",
+        "enum": [
+          "fr-FR",
+          "en-US",
+          "en-GB"
+        ],
+        "example": "fr-FR"
+      },
+      "SubscriptionStatus": {
+        "type": "string",
+        "description": "Subscription's status.",
+        "enum": [
+          "active",
+          "pending",
+          "expired",
+          "retryPeriod",
+          "gracePeriod",
+          "revoked"
+        ]
+      },
+      "SubscriptionType": {
+        "type": "string",
+        "description": "All types of subscriptions.",
+        "enum": [
+          "auto-renewal",
+          "non-renewing"
+        ],
+        "example": "auto-renewal"
+      },
+      "UserCredentials": {
+        "type": "object",
+        "description": "User credentials used to authenticate the user.",
+        "required": [
+          "email",
+          "password",
+          "application"
+        ],
+        "properties": {
+          "email": {
+            "$ref": "#/components/parameters/Email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "super-secret-but-not-so-safe-password"
+          },
+          "application": {
+            "type": "string",
+            "description": "Application for which the user is being requested",
+            "example": "synapse"
+          }
+        }
+      },
+      "SaveClientApplication": {
+        "type": "object",
+        "description": "Company client application",
+        "required": [
+          "clientId",
+          "applicationDisplayName"
+        ],
+        "properties": {
+          "consumerName": {
+            "type": "string",
+            "description": "Company client as known by Kong.",
+            "example": "easycare"
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Company client identifier. Will be used as client_id in Keycloak.",
+            "example": "easycare"
+          },
+          "applicationDisplayName": {
+            "type": "string",
+            "description": "Company client display name (shown in emails).",
+            "example": "easycare"
+          },
+          "maxAttachmentNumber": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Maximum number of attachments allowed for this client application.",
+            "example": 5
+          },
+          "defaultLicenses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/License"
+            },
+            "description": "List of licenses attached to this client application."
+          }
+        }
+      },
+      "ClientApplication": {
+        "type": "object",
+        "description": "Company client application",
+        "required": [
+          "id",
+          "clientId",
+          "applicationDisplayName",
+          "consumerName"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Client application's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Client's \"clientId\" in Keycloak (different from \"id\").",
+            "example": "synapse"
+          },
+          "applicationDisplayName": {
+            "type": "string",
+            "description": "Company client application's name as displayed in emails.",
+            "example": "easycare"
+          },
+          "consumerName": {
+            "type": "string",
+            "description": "Company client as known by Kong.",
+            "example": "easycare"
+          },
+          "maxAttachmentNumber": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Maximum number of free users attached to a single paid user.",
+            "example": 5
+          }
+        }
+      },
+      "ClientApplicationList": {
+        "type": "object",
+        "description": "List of client applications matching filter, page size and page index.",
+        "required": [
+          "total",
+          "results"
+        ],
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total number of license matching filter",
+            "example": 1
+          },
+          "results": {
+            "type": "array",
+            "description": "Licenses matching filter, page size and page index",
+            "items": {
+              "$ref": "#/components/schemas/ClientApplication"
+            }
+          }
+        }
+      },
+      "SaveCode": {
+        "type": "object",
+        "description": "Code object to save.",
+        "required": [
+          "code",
+          "type",
+          "licenses",
+          "defaultMarketingTags",
+          "application",
+          "enabled"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Value of the code (i.e. the value to use to activate the code).",
+            "example": "123456"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CodeType"
+          },
+          "description": {
+            "type": "string",
+            "description": "Code's description.",
+            "example": "The code to get unlimited access to the app for 1000 years"
+          },
+          "partnerName": {
+            "type": "string",
+            "description": "Name of the partner for which the code was created. Only relevant for partner codes.",
+            "example": "Neovim foundation"
+          },
+          "promotionLabel": {
+            "type": "string",
+            "description": "Label of the promotion for which the code was created. Only relevant for promotional codes.",
+            "example": "Black Friday 2020"
+          },
+          "licenses": {
+            "description": "Licenses the code gives subscription for.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaveCodeLicense"
+            }
+          },
+          "defaultMarketingTags": {
+            "description": "Code's default marketing tags",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426655440000"
+            }
+          },
+          "application": {
+            "type": "string",
+            "description": "Application for which the code exists.",
+            "example": "synapse"
+          },
+          "validityStartDate": {
+            "type": "string",
+            "description": "Date at which the code becomes valid.",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "validityEndDate": {
+            "type": "string",
+            "description": "Date at which the code stops being valid.",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "maxUsage": {
+            "type": "integer",
+            "description": "Maximum number of times the code can be used.",
+            "example": 100
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True means the code can be used. Useful to disable a code independently of its validity dates.",
+            "example": true
+          }
+        }
+      },
+      "SaveCodeLicense": {
+        "type": "object",
+        "description": "Relation between a license and a code to be saved.",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "License id.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426655440000"
+          },
+          "subscriptionDuration": {
+            "type": "number",
+            "description": "Duraction of the subscription this license gives in days.",
+            "example": 1000
+          }
+        }
+      },
+      "UpdateCode": {
+        "type": "object",
+        "description": "Code to update",
+        "required": [
+          "code",
+          "type",
+          "application",
+          "enabled"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Value of the code (i.e. the value to use to activate the code).",
+            "example": "123456"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CodeType"
+          },
+          "description": {
+            "type": "string",
+            "description": "Code's description.",
+            "example": "The code to get unlimited access to the app for 1000 years"
+          },
+          "partnerName": {
+            "type": "string",
+            "description": "Name of the partner for which the code was created. Only relevant for partner codes.",
+            "example": "Neovim foundation"
+          },
+          "promotionLabel": {
+            "type": "string",
+            "description": "Label of the promotion for which the code was created. Only relevant for promotional codes.",
+            "example": "Black Friday 2020"
+          },
+          "licenses": {
+            "description": "Licenses the code gives subscription for.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaveCodeLicense"
+            }
+          },
+          "defaultMarketingTags": {
+            "description": "Code's default marketing tags",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426655440000"
+            }
+          },
+          "application": {
+            "type": "string",
+            "description": "Application for which the code exists.",
+            "example": "synapse"
+          },
+          "validityStartDate": {
+            "type": "string",
+            "description": "Date at which the code becomes valid.",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "validityEndDate": {
+            "type": "string",
+            "description": "Date at which the code stops being valid.",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "maxUsage": {
+            "type": "integer",
+            "description": "Maximum number of times the code can be used.",
+            "example": 100
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True means the code can be used. Useful to disable a code independently of its validity dates.",
+            "example": true
+          }
+        }
+      },
+      "Code": {
+        "type": "object",
+        "description": "A code is a string that can be used to activate a subscription.",
+        "required": [
+          "id",
+          "code",
+          "application",
+          "type",
+          "licenses",
+          "defaultMarketingTags",
+          "enabled"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Code's unique identifier.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426655440000"
+          },
+          "code": {
+            "type": "string",
+            "description": "Code value (i.e. the value to use to activate the code).",
+            "example": "123456"
+          },
+          "application": {
+            "type": "string",
+            "description": "Application for which the code exists.",
+            "example": "synapse"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CodeType"
+          },
+          "description": {
+            "type": "string",
+            "description": "Code's description.",
+            "example": "The code to get unlimited access to the app for 1000 years"
+          },
+          "partnerName": {
+            "type": "string",
+            "description": "Name of the partner for which the code was created. Only relevant for partner codes.",
+            "example": "Neovim foundation"
+          },
+          "promotionLabel": {
+            "type": "string",
+            "description": "Label of the promotion for which the code was created. Only relevant for promotional codes.",
+            "example": "Black Friday 2020"
+          },
+          "licenses": {
+            "description": "Licenses the code gives subscription for.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CodeLicense"
+            }
+          },
+          "defaultMarketingTags": {
+            "description": "Code's default marketing tags",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTag"
+            }
+          },
+          "validityStartDate": {
+            "type": "string",
+            "description": "Date at which the code becomes valid.",
+            "format": "date-time (iso 8601)",
+            "example": "2020-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "validityEndDate": {
+            "type": "string",
+            "description": "Date at which the code stops being valid.",
+            "format": "date-time (iso 8601)",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "maxUsage": {
+            "type": "number",
+            "description": "Maximum number of times the code can be used.",
+            "example": 100
+          },
+          "readOnly": {
+            "type": "boolean",
+            "description": "True means the code can't be updated.",
+            "example": false
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True means the code can be used. Useful to disable a code independently of its validity dates.",
+            "example": true
+          }
+        }
+      },
+      "CodeLicense": {
+        "type": "object",
+        "description": "Relation between a code and a license.",
+        "required": [
+          "id",
+          "license",
+          "subscriptionDuration"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "License id.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426655440000"
+          },
+          "license": {
+            "type": "string",
+            "description": "License name",
+            "example": "Neovim foundation"
+          },
+          "subscriptionDuration": {
+            "type": "number",
+            "description": "Duraction of the subscription this license gives in days.",
+            "example": 1000
+          }
+        }
+      },
+      "CodeList": {
+        "type": "object",
+        "description": "List of codes matching filters, page size and page index",
+        "required": [
+          "total",
+          "results"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of codes matching filter",
+            "example": 10
+          },
+          "results": {
+            "type": "array",
+            "description": "Codes matching filter, page size and page index",
+            "items": {
+              "$ref": "#/components/schemas/CodeSummary"
+            }
+          }
+        }
+      },
+      "CodeSummary": {
+        "type": "object",
+        "description": "Code summary. Smaller set of information regarding a code.",
+        "required": [
+          "id",
+          "code",
+          "application",
+          "type",
+          "enabled"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Code's unique identifier.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426655440000"
+          },
+          "code": {
+            "type": "string",
+            "description": "Code value (i.e. the value to use to activate the code).",
+            "example": "123456"
+          },
+          "application": {
+            "type": "string",
+            "description": "Application for which the code exists.",
+            "example": "synapse"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CodeType"
+          },
+          "partnerName": {
+            "type": "string",
+            "description": "Name of the partner for which the code was created. Only relevant for partner codes.",
+            "example": "Neovim foundation"
+          },
+          "promotionLabel": {
+            "type": "string",
+            "description": "Label of the promotion for which the code was created. Only relevant for promotional codes.",
+            "example": "Black Friday 2020"
+          },
+          "validityStartDate": {
+            "type": "string",
+            "description": "Date at which the code becomes valid.",
+            "format": "date-time (iso 8601)",
+            "example": "2020-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "validityEndDate": {
+            "type": "string",
+            "description": "Date at which the code becomes invalid.",
+            "format": "date-time (iso 8601)",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "maxUsage": {
+            "type": "number",
+            "description": "Maximum number of times the code can be used.",
+            "example": 1000
+          },
+          "readOnly": {
+            "type": "boolean",
+            "description": "True means the code can't be updated.",
+            "example": false
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "True means the code can be used. Useful to disable a code independently of its validity dates.",
+            "example": true
+          },
+          "licenses": {
+            "description": "Code's associated licenses",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CodeLicense"
+            }
+          },
+          "defaultMarketingTags": {
+            "description": "Code's default marketing tags",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTagSummary"
+            }
+          }
+        }
+      },
+      "SaveSynapseWidgetAttachment": {
+        "type": "object",
+        "description": "Model to use when attaching a secondary user to a primary user.",
+        "required": [
+          "user_id",
+          "primary_user_id",
+          "firstname",
+          "lastname",
+          "speciality"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User's identifier in your system, must be unique.",
+            "example": 123456789
+          },
+          "primary_user_id": {
+            "type": "string",
+            "description": "User id of the primary user this subscription is attached to. Must be unique and already registered as a primary user.",
+            "example": 987654321
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname.",
+            "example": "John"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname.",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email of a user. Must be unique and valid.",
+            "format": "email",
+            "example": "zinedine-zidane@mail.com"
+          },
+          "speciality": {
+            "type": "string",
+            "description": "User's medical speciality."
+          },
+          "tags": {
+            "type": "array",
+            "description": "User's tags.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "description": "User's attachment start date. Can't be in the past.",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "User's attachment end date. Can't be before the start date, nor in the past.",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-20T00:00:00.000Z"
+          }
+        }
+      },
+      "SaveSynapseWidgetDetachment": {
+        "type": "object",
+        "description": "Model to use when detaching a secondary user from a primary user.",
+        "required": [
+          "user_id",
+          "primary_user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User's identifier in your system, must be unique.",
+            "example": 123456789
+          },
+          "primary_user_id": {
+            "type": "string",
+            "description": "User id of the primary user this subscription is attached to. Must be unique and already registered as a primary user.",
+            "example": 987654321
+          },
+          "end_date": {
+            "type": "string",
+            "description": "User's attachment end date. Can't be before the start date, nor in the past.",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-20T00:00:00.000Z",
+            "default": "now"
+          }
+        }
+      },
+      "SaveSynapseWidgetSubscription": {
+        "type": "object",
+        "description": "Model to use when subscribing a primary user.",
+        "required": [
+          "user_id",
+          "firstname",
+          "lastname",
+          "speciality"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User's identifier in your system, must be unique.",
+            "example": 123456789
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname.",
+            "example": "John"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname.",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email of a user. Must be unique and valid.",
+            "format": "email",
+            "example": "zinedine-zidane@mail.com"
+          },
+          "transaction_id": {
+            "type": "string",
+            "description": "Transaction id. Can be used to facilitate communication between billing departments.",
+            "example": 123456789
+          },
+          "speciality": {
+            "type": "string",
+            "description": "User's medical speciality."
+          },
+          "tags": {
+            "type": "array",
+            "description": "User's tags.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "description": "User's subscription start date. Can't be in the past.",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "trial_end_date": {
+            "type": "string",
+            "description": "User's trial period end date. Use it if the user benefits from a trial period. Can't be in the past.",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-10T00:00:00.000Z"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "User's subscription end date. Can't be before the start or end date, nor in the past.",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-20T00:00:00.000Z"
+          }
+        }
+      },
+      "SaveSynapseWidgetTermination": {
+        "type": "object",
+        "description": "Model to use when terminating a primary user's subscription.",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User's identifier in your system, must be unique.",
+            "example": 123456789
+          },
+          "subscription_id": {
+            "type": "string",
+            "description": "Specific subscription to cancel. If not provided, all subscriptions will be canceled.",
+            "example": "sub_123456"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "User's subscription end date. Can't be before the start date, nor in the past.",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-20T00:00:00.000Z",
+            "default": "now"
+          }
+        }
+      },
+      "UpdateLapUser": {
+        "type": "object",
+        "description": "Information on the user.",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User's identifier in your system, must be unique.",
+            "example": 123456,
+            "readOnly": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email of a user. Must be unique and valid.",
+            "example": "theprimeagen@mail.com"
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname.",
+            "example": "The"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname.",
+            "example": "Primeagen"
+          },
+          "speciality": {
+            "type": "string",
+            "description": "User's medical speciality.",
+            "example": "Cardiology"
+          },
+          "rpps": {
+            "type": "string",
+            "description": "User's RPPS number. Should be 11 digits.",
+            "example": 12345678901,
+            "pattern": "^[0-9]{11}$"
+          }
+        }
+      },
+      "UpdateSynapseWidgetSubscription": {
+        "type": "object",
+        "description": "Describe a subscription update.",
+        "properties": {
+          "start_date": {
+            "type": "string",
+            "description": "Subscription start date.",
+            "format": "date-time (iso-8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Subscription end date.",
+            "format": "date-time (iso-8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "licenses": {
+            "type": "array",
+            "description": "List of license names that needs to be linked to this subscription. Please contact our services to get the license names available in your situation.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LapUser": {
+        "type": "object",
+        "description": "Information on the user.",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User's identifier in your system, must be unique.",
+            "example": 123456,
+            "readOnly": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Email of a user. Must be unique and valid.",
+            "example": "theprimeagen@mail.com"
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname.",
+            "example": "The"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname.",
+            "example": "Primeagen"
+          },
+          "speciality": {
+            "type": "string",
+            "description": "User's medical speciality.",
+            "example": "Cardiology"
+          },
+          "rpps": {
+            "type": "string",
+            "description": "User's RRPS number. Should be 11 digits.",
+            "example": 12345678901
+          }
+        }
+      },
+      "LapUserAttachment": {
+        "type": "object",
+        "description": "Attachment between a primary and a secondary user.",
+        "required": [
+          "id",
+          "startDate",
+          "status",
+          "primaryUserId",
+          "secondaryUserId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Attachment id.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Attachment start date.",
+            "format": "date-time (iso-8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Attachment end date.",
+            "format": "date-time (iso-8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LapSubscriptionStatus"
+          },
+          "primaryUserId": {
+            "type": "string",
+            "description": "Primary user id.",
+            "example": 1234567890
+          },
+          "secondaryUserId": {
+            "type": "string",
+            "description": "Secondary user id.",
+            "example": 1234567890
+          }
+        }
+      },
+      "LapUserSubscription": {
+        "type": "object",
+        "description": "Subscription of a lap user.",
+        "required": [
+          "id",
+          "startDate",
+          "endDate",
+          "trial",
+          "licenses",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Subscription id.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "trial": {
+            "type": "boolean",
+            "description": "Whether the subscription is a trial or not"
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "Can be used to facilitate communication between billing departments."
+          },
+          "licenses": {
+            "type": "array",
+            "description": "Name of the licenses associated with the subscription, comma separated.",
+            "items": {
+              "type": "string",
+              "example": "license1, license2"
+            }
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Subscription start date.",
+            "format": "date-time (iso-8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Subscription end date.",
+            "format": "date-time (iso-8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LapSubscriptionStatus"
+          }
+        }
+      },
+      "SaveLicense": {
+        "type": "object",
+        "description": "Object used to create or update license",
+        "required": [
+          "name",
+          "description"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "License's name.",
+            "example": "synapse-premium"
+          },
+          "description": {
+            "type": "string",
+            "description": "License's description.",
+            "example": "Synapse premium license"
+          },
+          "defaultMarketingTags": {
+            "type": "array",
+            "description": "Marketing tags that are automatically added to a user when he is subscribed to this license.",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTag"
+            }
+          }
+        }
+      },
+      "License": {
+        "type": "object",
+        "description": "License used with subscriptions.",
+        "required": [
+          "id",
+          "name",
+          "defaultMarketingTags"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "License's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "name": {
+            "type": "string",
+            "description": "License's name.",
+            "example": "synapse-premium"
+          },
+          "description": {
+            "type": "string",
+            "description": "License's description.",
+            "example": "Synapse premium license"
+          },
+          "defaultMarketingTags": {
+            "type": "array",
+            "description": "Marketing tags that are automatically added to a user when he is subscribed to this license.",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTagSummary"
+            }
+          }
+        }
+      },
+      "LicenseList": {
+        "type": "object",
+        "description": "List of licenses matching filter, page size and page index.",
+        "required": [
+          "total",
+          "results"
+        ],
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total number of license matching filter",
+            "example": 1
+          },
+          "results": {
+            "type": "array",
+            "description": "Licenses matching filter, page size and page index",
+            "items": {
+              "$ref": "#/components/schemas/License"
+            }
+          }
+        }
+      },
+      "MarketingTag": {
+        "type": "object",
+        "description": "Marketing tag. Matches a tag from mailchimp.",
+        "required": [
+          "id",
+          "tag"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Marketing tag's unique identifier.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426655440000"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Value of the tag.",
+            "example": "neovim"
+          },
+          "description": {
+            "type": "string",
+            "description": "Tag's description.",
+            "example": "The best tag to have"
+          }
+        }
+      },
+      "MarketingTagList": {
+        "type": "object",
+        "description": "List of marketing tags matching filter, page size and page index.",
+        "required": [
+          "total",
+          "results"
+        ],
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total number of marketing tags matching filter",
+            "example": 1
+          },
+          "results": {
+            "type": "array",
+            "description": "Marketing tags matching filter, page size and page index",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTagSummary"
+            }
+          }
+        }
+      },
+      "MarketingTagSummary": {
+        "type": "object",
+        "description": "Marketing tag summary. Smaller set of information regarding a marketing tag.",
+        "required": [
+          "id",
+          "tag"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Marketing tag's unique identifier.",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426655440000"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Value of the tag.",
+            "example": "neovim"
+          }
+        }
+      },
+      "Profession": {
+        "type": "object",
+        "description": "Profession model.",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Profession's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the profession.",
+            "example": "Bug producer"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the profession.",
+            "example": "Producer of bugs"
+          },
+          "labelFrFr": {
+            "type": "string",
+            "description": "Label of the profession in french.",
+            "example": "Producteur de bugs"
+          },
+          "labelEnGb": {
+            "type": "string",
+            "description": "Label of the profession in british english.",
+            "example": "Bug producer"
+          },
+          "labelEnUs": {
+            "type": "string",
+            "description": "Label of the profession in american english.",
+            "example": "Bug producer"
+          },
+          "defaultMarketingTags": {
+            "type": "array",
+            "description": "Default marketing to add to a user when he is assigned this profession.",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTagSummary"
+            }
+          },
+          "specialities": {
+            "type": "array",
+            "description": "Specialities related to this profession.",
+            "items": {
+              "$ref": "#/components/schemas/Speciality"
+            }
+          }
+        }
+      },
+      "ProfessionList": {
+        "type": "object",
+        "description": "List of professions matching filter, page size and page index.",
+        "required": [
+          "total",
+          "results"
+        ],
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total number of profession matching filter",
+            "example": 1
+          },
+          "results": {
+            "type": "array",
+            "description": "Professions matching filter, page size and page index",
+            "items": {
+              "$ref": "#/components/schemas/Profession"
+            }
+          }
+        }
+      },
+      "Speciality": {
+        "type": "object",
+        "description": "Speciality model.",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Speciality's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the speciality.",
+            "example": "Bug producer"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the speciality.",
+            "example": "Producer of bugs"
+          },
+          "labelFrFr": {
+            "type": "string",
+            "description": "Label of the speciality in french.",
+            "example": "Producteur de bugs"
+          },
+          "labelEnGb": {
+            "type": "string",
+            "description": "Label of the speciality in british english.",
+            "example": "Bug producer"
+          },
+          "labelEnUs": {
+            "type": "string",
+            "description": "Label of the speciality in american english.",
+            "example": "Bug producer"
+          },
+          "defaultMarketingTags": {
+            "type": "array",
+            "description": "Default marketing to add to a user when he is assigned this speciality.",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTagSummary"
+            }
+          },
+          "subSpecialities": {
+            "type": "array",
+            "description": "Sub specialities related to this speciality.",
+            "items": {
+              "$ref": "#/components/schemas/SubSpeciality"
+            }
+          }
+        }
+      },
+      "SubSpeciality": {
+        "type": "object",
+        "description": "Sub speciality model.",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Sub specitlity's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the sub speciality.",
+            "example": "Bug producer"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the sub speciality.",
+            "example": "Producer of bugs"
+          },
+          "labelFrFr": {
+            "type": "string",
+            "description": "Label of the sub speciality in french.",
+            "example": "Producteur de bugs"
+          },
+          "labelEnGb": {
+            "type": "string",
+            "description": "Label of the sub speciality in british english.",
+            "example": "Bug producer"
+          },
+          "labelEnUs": {
+            "type": "string",
+            "description": "Label of the sub speciality in american english.",
+            "example": "Bug producer"
+          },
+          "defaultMarketingTags": {
+            "type": "array",
+            "description": "Default marketing to add to a user when he is assigned this sub speciality.",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTagSummary"
+            }
+          }
+        }
+      },
+      "RedeemCode": {
+        "type": "object",
+        "description": "Model used when redeeming a code.",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to redeem.",
+            "example": "SYNAPSE-PR3MIUM"
+          }
+        }
+      },
+      "SaveSubscription": {
+        "type": "object",
+        "description": "Model used when saving a subscription.",
+        "properties": {
+          "licenses": {
+            "type": "array",
+            "description": "Name of licenses that will be associated to the subscription.",
+            "items": {
+              "type": "string",
+              "example": "license1"
+            }
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Subscription's start date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Subscription's expiration date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-02T00:00:00.000Z"
+          }
+        }
+      },
+      "SaveUser": {
+        "type": "object",
+        "description": "Object used when saving a user.",
+        "required": [
+          "application",
+          "countryCode",
+          "locale"
+        ],
+        "properties": {
+          "email": {
+            "$ref": "#/components/parameters/Email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password.",
+            "example": 12345678
+          },
+          "registrationCode": {
+            "type": "string",
+            "description": "Code used at registration.",
+            "example": "SYNAPSE-PR3MIUM"
+          },
+          "newsletterConsent": {
+            "type": "boolean",
+            "description": "True if the user has consented to receive the newsletter.",
+            "example": true
+          },
+          "application": {
+            "type": "string",
+            "description": "Application name to register the user to.",
+            "example": "synapse"
+          },
+          "countryCode": {
+            "$ref": "#/components/schemas/UserEntityCountry"
+          },
+          "locale": {
+            "$ref": "#/components/schemas/LanguageCultureCode"
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname.",
+            "example": "Jean-Pierre"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname.",
+            "example": "Papin"
+          },
+          "professionId": {
+            "type": "string",
+            "description": "User's profession id.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "specialityId": {
+            "type": "string",
+            "description": "User's speciality id.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "subSpecialityId": {
+            "type": "string",
+            "description": "User's sub speciality id.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "licenses": {
+            "type": "array",
+            "description": "License ids to subscribe the user to.",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          },
+          "marketingTags": {
+            "type": "array",
+            "description": "Marketing tag ids to subscribe the user to.",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          },
+          "speciality": {
+            "type": "string",
+            "description": "User's speciality.",
+            "example": "Bug producer"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "External id used in a lap subscription context.",
+            "example": "12345678-1234-1234-1234-123456789012"
+          }
+        }
+      },
+      "UpdateSubscription": {
+        "type": "object",
+        "description": "Model used when updating a subscription.",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "description": "Subscription's expiration date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Subscription's expiration date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-02T00:00:00.000Z"
+          }
+        }
+      },
+      "UpdateUser": {
+        "type": "object",
+        "description": "Model used when updating a user.",
+        "required": [
+          "newsletterConsent",
+          "countryCode",
+          "locale"
+        ],
+        "properties": {
+          "newsletterConsent": {
+            "type": "boolean",
+            "description": "True if the user has consented to receive newsletters.",
+            "example": true
+          },
+          "countryCode": {
+            "$ref": "#/components/schemas/UserEntityCountry"
+          },
+          "locale": {
+            "$ref": "#/components/schemas/LanguageCultureCode"
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname. Empty string reset firstname to null. If not present or equals to null, keep current user firstname.",
+            "example": "Prime"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname. Empty string reset lastname to null. If not present or equals to null, keep current user lastname.",
+            "example": "Agen"
+          },
+          "professionId": {
+            "type": "string",
+            "description": "User's profession id. Empty string reset profession to null. If not present or equals to null, keep current user profession.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "specialityId": {
+            "type": "string",
+            "description": "User's speciality id. Empty string reset speciality to null. If not present or equals to null keep, current user speciality.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "subSpecialityId": {
+            "type": "string",
+            "description": "User's sub speciality id. Empty string reset sub speciality to null. If not present or equals to null, keep current user sub speciality.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "rpps": {
+            "type": "string",
+            "description": "User's RPPS. Empty string reset RPPS to null. If not present or equals to null, keep current user RPPS.",
+            "example": 12345678901,
+            "minLength": 11,
+            "maxLength": 11
+          },
+          "freeTextSpeciality": {
+            "type": "string",
+            "description": "User's free text speciality. Empty string reset free text speciality to null. If not present or equals to null, keep current user free text speciality.",
+            "example": "Cardiologist"
+          },
+          "email": {
+            "$ref": "#/components/parameters/Email"
+          }
+        }
+      },
+      "UpdateUserPasswordV1": {
+        "type": "object",
+        "description": "Model used when updating a user's password. Used in the v1 api where a password is genberated and sent to the user.",
+        "required": [
+          "password"
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "User's new password.",
+            "example": 12345678
+          }
+        }
+      },
+      "ValidateInAppPurchasedSubscription": {
+        "type": "object",
+        "description": "Model used when validating a subscription.",
+        "required": [
+          "platform",
+          "license",
+          "transaction"
+        ],
+        "properties": {
+          "platform": {
+            "type": "string",
+            "description": "Subscription's platform.",
+            "example": "google-play"
+          },
+          "license": {
+            "type": "string",
+            "description": "License that will be associated to the subscription.",
+            "example": "synapse-premium"
+          },
+          "transaction": {
+            "type": "string",
+            "description": "Transaction's unique identifier.",
+            "example": 1234567890
+          }
+        }
+      },
+      "ProfessionSummary": {
+        "type": "object",
+        "description": "Profession summary. Smaller set of information regarding a profession.",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Profession's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the profession.",
+            "example": "Bug producer"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the profession.",
+            "example": "Producer of bugs"
+          },
+          "labelFrFr": {
+            "type": "string",
+            "description": "Label of the profession in french.",
+            "example": "Producteur de bugs"
+          },
+          "labelEnGb": {
+            "type": "string",
+            "description": "Label of the profession in british english.",
+            "example": "Bug producer"
+          },
+          "labelEnUs": {
+            "type": "string",
+            "description": "Label of the profession in american english.",
+            "example": "Bug producer"
+          }
+        }
+      },
+      "RedeemedCode": {
+        "type": "object",
+        "description": "RedeemedCode is a code that has been redeemed by a user.",
+        "required": [
+          "redeemedDate",
+          "code",
+          "registrationCode"
+        ],
+        "properties": {
+          "redeemedDate": {
+            "type": "string",
+            "description": "Date when the code was redeemed.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "code": {
+            "$ref": "#/components/schemas/Code"
+          },
+          "registrationCode": {
+            "type": "boolean",
+            "description": "Indicates if the code was redeemed at registration or not.",
+            "example": true
+          }
+        }
+      },
+      "RedeemedCodeSummary": {
+        "type": "object",
+        "description": "Redeemed code summary. Smaller set of information regarding a redeemed code.",
+        "required": [
+          "redeemedDate",
+          "code",
+          "registrationCode"
+        ],
+        "properties": {
+          "redeemedDate": {
+            "type": "string",
+            "description": "Date when the code was redeemed.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "code": {
+            "$ref": "#/components/schemas/Code"
+          },
+          "registrationCode": {
+            "type": "boolean",
+            "description": "Indicates if the code was redeemed at registration or not.",
+            "example": true
+          }
+        }
+      },
+      "SpecialitySummary": {
+        "type": "object",
+        "description": "Speciality summary. Smaller set of information regarding a speciality.",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Speciality's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the speciality.",
+            "example": "Bug producer"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the speciality.",
+            "example": "Producer of bugs"
+          },
+          "labelFrFr": {
+            "type": "string",
+            "description": "Label of the speciality in french.",
+            "example": "Producteur de bugs"
+          },
+          "labelEnGb": {
+            "type": "string",
+            "description": "Label of the speciality in british english.",
+            "example": "Bug producer"
+          },
+          "labelEnUs": {
+            "type": "string",
+            "description": "Label of the speciality in american english.",
+            "example": "Bug producer"
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "description": "Subscriptions are links between a user and a license, defined in time.",
+        "required": [
+          "id",
+          "licenses",
+          "type",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Subscription's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "licenses": {
+            "type": "array",
+            "description": "Licenses the subscription provides.",
+            "items": {
+              "$ref": "#/components/schemas/License"
+            }
+          },
+          "type": {
+            "$ref": "#/components/schemas/SubscriptionType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "transaction": {
+            "type": "string",
+            "description": "Transaction's unique identifier.",
+            "example": 1234567890
+          },
+          "paymentPlatform": {
+            "type": "string",
+            "description": "Payment platform used for the transaction.",
+            "example": "google-play"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Subscription's start date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Subscription's expiration date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "redeemedCode": {
+            "$ref": "#/components/schemas/CodeSummary"
+          }
+        }
+      },
+      "SubscriptionSummary": {
+        "type": "object",
+        "description": "Subscription summary. Smaller set of information regarding a subscription.",
+        "required": [
+          "id",
+          "license",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Subscription's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "licenses": {
+            "type": "array",
+            "description": "Name of the license associated to the subscription.",
+            "items": {
+              "$ref": "#/components/schemas/License"
+            }
+          },
+          "type": {
+            "$ref": "#/components/schemas/SubscriptionType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "paymentPlatform": {
+            "type": "string",
+            "description": "Payment platform used for the transaction.",
+            "example": "google-play"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Subscription's start date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Subscription's expiration date.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "redeemedCode": {
+            "$ref": "#/components/schemas/CodeSummary"
+          }
+        }
+      },
+      "SubSpecialitySummary": {
+        "type": "object",
+        "description": "Sub speciality summary. Smaller set of information regarding a sub speciality.",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Sub speciality's unique identifier.",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the sub speciality.",
+            "example": "Bug producer"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the sub speciality.",
+            "example": "Producer of bugs"
+          },
+          "labelFrFr": {
+            "type": "string",
+            "description": "Label of the sub speciality in french.",
+            "example": "Producteur de bugs"
+          },
+          "labelEnGb": {
+            "type": "string",
+            "description": "Label of the sub speciality in british english.",
+            "example": "Bug producer"
+          },
+          "labelEnUs": {
+            "type": "string",
+            "description": "Label of the sub speciality in american english.",
+            "example": "Bug producer"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "description": "User is the main entity in this project. It represents a user for a given application.",
+        "required": [
+          "id",
+          "username",
+          "email",
+          "emailVerified",
+          "newsletterConsent",
+          "application",
+          "registrationDate",
+          "countryCode",
+          "locale",
+          "activeSubscriptions",
+          "marketingTags",
+          "salt",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User's unique identifier",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "username": {
+            "type": "string",
+            "description": "User's username.",
+            "example": "john.doe@mail.com"
+          },
+          "email": {
+            "$ref": "#/components/parameters/Email"
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "True if the user's email has been verified.",
+            "example": true
+          },
+          "newsletterConsent": {
+            "type": "boolean",
+            "description": "True if the user has consented to receive the newsletter.",
+            "example": true
+          },
+          "application": {
+            "type": "string",
+            "description": "Application name to register the user to.",
+            "example": "synapse"
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Date at which the user registered.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "countryCode": {
+            "$ref": "#/components/schemas/UserEntityCountry"
+          },
+          "locale": {
+            "$ref": "#/components/schemas/LanguageCultureCode"
+          },
+          "lastConnectionDate": {
+            "type": "string",
+            "description": "Date at which the user last connected.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname.",
+            "example": "Jean-Pierre"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname.",
+            "example": "Papin"
+          },
+          "rpps": {
+            "type": "string",
+            "description": "Number of identification of the health professional.",
+            "example": 12345678901
+          },
+          "freeTextSpeciality": {
+            "type": "string",
+            "description": "Free text speciality. Does not refers to a speciality in the database (hence the name).",
+            "example": "Cardiologist"
+          },
+          "activeSubscriptions": {
+            "type": "array",
+            "description": "List of the user's active subscriptions.",
+            "items": {
+              "type": "string",
+              "example": "synapse-premium"
+            }
+          },
+          "marketingTags": {
+            "type": "array",
+            "description": "Marketing tag ids to subscribe the user to.",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "example": "12345678-1234-1234-1234-123456789012"
+            }
+          },
+          "registrationCode": {
+            "type": "string",
+            "description": "Code used at registration.",
+            "example": "SYNAPSE-PR3MIUM"
+          },
+          "salt": {
+            "type": "string",
+            "description": "Salt used to make the user anonymous regarding tracking.",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "profession": {
+            "$ref": "#/components/schemas/ProfessionSummary"
+          },
+          "speciality": {
+            "$ref": "#/components/schemas/SpecialitySummary"
+          },
+          "subSpeciality": {
+            "$ref": "#/components/schemas/SubSpecialitySummary"
+          },
+          "status": {
+            "type": "string",
+            "description": "User's registration status.",
+            "example": "pending"
+          }
+        }
+      },
+      "UserList": {
+        "type": "object",
+        "description": "List of users matching filter, page size and page index.",
+        "required": [
+          "total",
+          "results"
+        ],
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total number of users matching filter",
+            "example": 1
+          },
+          "results": {
+            "type": "array",
+            "description": "Users matching filter, page size and page index",
+            "items": {
+              "$ref": "#/components/schemas/UserSummary"
+            }
+          }
+        }
+      },
+      "UserSummary": {
+        "type": "object",
+        "description": "User summary. Smaller set of information regarding a user.",
+        "required": [
+          "id",
+          "username",
+          "email",
+          "emailVerified",
+          "application",
+          "registrationDate",
+          "countryCode",
+          "locale",
+          "activeSubscriptions",
+          "marketingTags"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User's unique identifier",
+            "format": "uuid",
+            "example": "12345678-1234-1234-1234-123456789012"
+          },
+          "username": {
+            "type": "string",
+            "description": "User's username.",
+            "example": "john.doe@mail.com"
+          },
+          "email": {
+            "$ref": "#/components/parameters/Email"
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "True if the user's email has been verified.",
+            "example": true
+          },
+          "application": {
+            "type": "string",
+            "description": "Application name to register the user to.",
+            "example": "synapse"
+          },
+          "externalIds": {
+            "type": "array",
+            "description": "External ids of the user.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "clientApplication": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "consumerName": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Date at which the user registered.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "countryCode": {
+            "$ref": "#/components/schemas/UserEntityCountry"
+          },
+          "locale": {
+            "$ref": "#/components/schemas/LanguageCultureCode"
+          },
+          "lastConnectionDate": {
+            "type": "string",
+            "description": "Date at which the user last connected.",
+            "format": "date-time (iso 8601)",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "activeSubscriptions": {
+            "type": "array",
+            "description": "List of the user's active subscriptions.",
+            "items": {
+              "type": "string",
+              "example": "synapse-premium"
+            }
+          },
+          "marketingTags": {
+            "type": "array",
+            "description": "Marketing tag ids to subscribe the user to.",
+            "items": {
+              "type": "string",
+              "example": "premium"
+            }
+          },
+          "registrationCode": {
+            "type": "string",
+            "description": "Code used at registration.",
+            "example": "SYNAPSE-PR3MIUM"
+          },
+          "professionSummary": {
+            "$ref": "#/components/schemas/ProfessionSummary"
+          },
+          "specialitySummary": {
+            "$ref": "#/components/schemas/SpecialitySummary"
+          },
+          "subSpecialitySummary": {
+            "$ref": "#/components/schemas/SubSpecialitySummary"
+          },
+          "status": {
+            "type": "string",
+            "description": "User's registration status.",
+            "example": "pending"
+          },
+          "freeTextSpeciality": {
+            "type": "string",
+            "description": "Free text speciality. Does not refers to a speciality in the database (hence the name).",
+            "example": "Cardiologist"
+          },
+          "firstname": {
+            "type": "string",
+            "description": "User's firstname.",
+            "example": "Jean-Pierre"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "User's lastname.",
+            "example": "Papin"
+          }
+        }
+      },
+      "SaveSynapseWidgetSubscriptionV2": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "The unique identifier for the user."
+          },
+          "firstname": {
+            "type": "string",
+            "description": "The first name of the user."
+          },
+          "lastname": {
+            "type": "string",
+            "description": "The last name of the user."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The email address of the user."
+          },
+          "transaction_id": {
+            "type": "string",
+            "description": "Transaction id. Can be used to facilitate communication between billing departments.",
+            "example": 123456789
+          },
+          "speciality": {
+            "type": "string",
+            "description": "The speciality of the user."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of tags associated with the user."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time (iso-8601)",
+            "description": "The start date of the subscription.",
+            "example": "2020-01-01T00:00:00.000Z",
+            "default": "now"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date-time (iso-8601)",
+            "example": "2020-01-01T00:00:00.000Z",
+            "description": "The end date of the subscription."
+          },
+          "licenses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of license names associated with the subscription (optional)."
+          },
+          "trial": {
+            "type": "boolean",
+            "description": "Indicates whether the subscription is a trial (optional)."
+          }
+        },
+        "required": [
+          "user_id",
+          "firstname",
+          "lastname",
+          "speciality"
+        ]
+      },
+      "InitiatePasswordRecovery": {
+        "type": "object",
+        "description": "Model used when initiating a password recovery.",
+        "required": [
+          "email",
+          "application"
+        ],
+        "properties": {
+          "email": {
+            "$ref": "#/components/parameters/Email"
+          },
+          "application": {
+            "type": "string",
+            "description": "Application name to initiate password recovery.",
+            "example": "synapse"
+          }
+        }
+      },
+      "PasswordRecovery": {
+        "type": "object",
+        "description": "Model used when sending a new password to the gateway.",
+        "required": [
+          "password"
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "Password to send to gateway as the new password.",
+            "example": 12345678
+          }
+        }
+      },
+      "UpdateUserPasswordV2": {
+        "type": "object",
+        "description": "Password to update for a given user. Used in the v2 api where a token is sent to the user.",
+        "required": [
+          "newPassword"
+        ],
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "description": "User's current password. Required if not external",
+            "example": 12345678
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "User's new password.",
+            "example": 12345678910
+          },
+          "external": {
+            "type": "boolean",
+            "description": "User's external status. External users are managed with the lap subscription api.",
+            "example": false
+          }
+        }
+      },
+      "LapSubscriptionStatus": {
+        "type": "string",
+        "description": "Lap subscription's status.",
+        "enum": [
+          "active",
+          "pending",
+          "expired"
+        ]
+      },
+      "UserEntityCountry": {
+        "type": "string",
+        "description": "All countries. Keys are kept in SCREAMING CASE for better understanding of its format.",
+        "enum": [
+          "AFG",
+          "ALB",
+          "DZA"
+        ]
+      }
+    },
+    "parameters": {
+      "PageSize": {
+        "name": "psize",
+        "in": "query",
+        "description": "Number of items per page.",
+        "schema": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "example": 5
+        }
+      },
+      "PageIndex": {
+        "name": "pidx",
+        "in": "query",
+        "description": "Page index.",
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "example": 2,
+          "minimum": 1
+        }
+      },
+      "Sort": {
+        "name": "sort",
+        "in": "query",
+        "description": "Field of the requested item type to sort on.",
+        "schema": {
+          "type": "string",
+          "example": "code"
+        }
+      },
+      "Order": {
+        "name": "order",
+        "in": "query",
+        "description": "Order to sort on.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        }
+      },
+      "Application": {
+        "name": "application",
+        "in": "query",
+        "description": "Application name a ressource belongs to.",
+        "schema": {
+          "type": "string",
+          "example": "synapse"
+        }
+      },
+      "Email": {
+        "name": "email",
+        "in": "query",
+        "description": "Email of a user. Must be unique and valid.",
+        "schema": {
+          "type": "string",
+          "format": "email",
+          "example": "zinedine-zidane@mail.com"
+        }
+      },
+      "Search": {
+        "name": "search",
+        "in": "query",
+        "description": "Search string. Can be used to filter ressources on specific fields. Refer to the documentation of the ressource to know which fields are searchable.",
+        "schema": {
+          "type": "string",
+          "example": "something"
+        }
+      },
+      "UserId": {
+        "name": "userId",
+        "in": "path",
+        "description": "User's unique identifier.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "12345678-1234-1234-1234-123456789012"
+        }
+      },
+      "SubscriptionId": {
+        "name": "subscriptionId",
+        "in": "path",
+        "description": "Subscription's unique identifier.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "12345678-1234-1234-1234-123456789012"
+        }
+      },
+      "MarketingTagId": {
+        "name": "marketingTagId",
+        "in": "path",
+        "description": "Marketing tag's unique identifier.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "12345678-1234-1234-1234-123456789012"
+        }
+      },
+      "AclGroupId": {
+        "name": "aclGroupId",
+        "in": "path",
+        "description": "Acl group's unique identifier.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "12345678-1234-1234-1234-123456789012"
+        }
+      },
+      "TokenValue": {
+        "name": "token",
+        "in": "path",
+        "description": "Token's value. Used to validate various requests.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": 1234567890
+        }
+      },
+      "LapUserType": {
+        "name": "userType",
+        "in": "path",
+        "description": "Type of user.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "primary-user",
+            "secondary-user"
+          ]
+        }
+      },
+      "ClientApplicationId": {
+        "name": "clientApplicationId",
+        "in": "path",
+        "description": "Client application's id (not client-id!)",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "12345678-1234-1234-1234-123456789012"
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Admin",
+      "description": "Admin API. Used to handle admin operations."
+    },
+    {
+      "name": "Login",
+      "description": "Authentication API. Used to handle user authentication."
+    },
+    {
+      "name": "ClientApplication",
+      "description": "Code API. Used to handle operations on codes."
+    },
+    {
+      "name": "Code",
+      "description": "Code API. Used to handle operations on codes."
+    },
+    {
+      "name": "Partner",
+      "description": "Subscription api"
+    },
+    {
+      "name": "Health",
+      "description": "Health API. Used to monitor api health."
+    },
+    {
+      "name": "KeycloakV1",
+      "description": "Keycloak comunnication endpoints"
+    },
+    {
+      "name": "License",
+      "description": "License API. Used to manage licenses."
+    },
+    {
+      "name": "MarketingTag",
+      "description": "Marketing tag API. Used to manage marketing tags."
+    },
+    {
+      "name": "Profession",
+      "description": "Profession API. Used to manage professions."
+    },
+    {
+      "name": "UserV1",
+      "description": "User API. Used to manage users."
+    },
+    {
+      "name": "PasswordRecoveryV2",
+      "description": "Password recovery API. Used to manage password recoveries. The new version of the API uses a token to recover the password. Token is sent by email and the user can set their new password themselves."
+    },
+    {
+      "name": "UserV2",
+      "description": "User API. Used to manage users. New versions allows for breaking changes."
+    }
+  ]
+}
