@@ -1,11 +1,15 @@
 
 import { OpenAPIV3 } from 'openapi-types'
-import { Tool } from '@modelcontextprotocol/sdk/types.js'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import z from 'zod'
 
-type ToolDeclaration = Partial<Tool>
-
+interface ToolDeclaration {
+    name: string
+    title?: string
+    description?: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    inputSchema: z.ZodObject<any>
+}
 
 export interface RouteDeclaration {
     method: string
@@ -20,22 +24,55 @@ function buildToolName(method: string, path: string): string {
         .replace(/^_|_$/g, '')
 }
 
+function openApiSchemaToZod(schema: OpenAPIV3.SchemaObject): z.ZodTypeAny {
+    switch (schema.type) {
+        case 'string':
+            return z.string()
+        case 'number':
+        case 'integer':
+            return z.number()
+        case 'boolean':
+            return z.boolean()
+        case 'array':
+            return z.array(
+                schema.items
+                    ? openApiSchemaToZod(schema.items as OpenAPIV3.SchemaObject)
+                    : z.unknown()
+            )
+        case 'object': {
+            if (schema.properties) {
+                const requiredFields = schema.required ?? []
+                const shape: z.ZodRawShape = {}
+                for (const [key, prop] of Object.entries(schema.properties)) {
+                    let field = openApiSchemaToZod(prop as OpenAPIV3.SchemaObject)
+                    if (!requiredFields.includes(key)) field = field.optional()
+                    shape[key] = field
+                }
+                return z.object(shape)
+            }
+            return z.record(z.unknown())
+        }
+        default:
+            return z.unknown()
+    }
+}
+
 /**
  * Construit une déclaration de MCP Tool depuis une route OpenAPI.
  */
 export function buildMcpTool(route: RouteDeclaration): ToolDeclaration {
     const { method, path, operation } = route
 
-    const properties: Record<string, object> = {}
-    const required: string[] = []
+    const shape: z.ZodRawShape = {}
 
     // Paramètres path / query / header
     for (const param of (operation.parameters ?? []) as OpenAPIV3.ParameterObject[]) {
-        properties[param.name] = {
-            ...(param.schema as object ?? {}),
-            ...(param.description ? { description: param.description } : {}),
-        }
-        if (param.required) required.push(param.name)
+        let field = param.schema
+            ? openApiSchemaToZod(param.schema as OpenAPIV3.SchemaObject)
+            : z.unknown()
+        if (param.description) field = field.describe(param.description)
+        if (!param.required) field = field.optional()
+        shape[param.name] = field
     }
 
     // Corps de la requête (application/json)
@@ -43,30 +80,21 @@ export function buildMcpTool(route: RouteDeclaration): ToolDeclaration {
         const body = operation.requestBody as OpenAPIV3.RequestBodyObject
         const jsonContent = body.content?.['application/json']
         if (jsonContent?.schema) {
-            properties['body'] = {
-                ...(jsonContent.schema as object),
-                ...(body.description ? { description: body.description } : {}),
-            }
-            if (body.required) required.push('body')
+            let field = openApiSchemaToZod(jsonContent.schema as OpenAPIV3.SchemaObject)
+            if (body.description) field = field.describe(body.description)
+            if (!body.required) field = field.optional()
+            shape['body'] = field
         }
     }
+
+    // En-têtes HTTP optionnels
+    shape['headers'] = z.record(z.string()).optional().describe('Optional HTTP headers to include in the request')
 
     return {
         name: buildToolName(method, path),
         title: operation.summary || operation.description,
         description: operation.description,
-        // inputSchema: {
-        //     type: 'object',
-        //     properties: {
-        //         ...properties,
-        //         headers: {
-        //             type: 'object',
-        //             description: 'Optional HTTP headers to include in the request',
-        //             additionalProperties: { type: 'string' },
-        //         },
-        //     },
-        //     ...(required.length > 0 ? { required } : {}),
-        // },
+        inputSchema: z.object(shape),
     }
 }
 
@@ -76,12 +104,16 @@ const MUTATING_METHODS = ['post', 'put', 'delete']
  * Demande confirmation via MCP elicitation si la méthode est mutante.
  * Retourne false si l'utilisateur annule.
  */
-async function confirmIfMutating(server: McpServer, route: RouteDeclaration): Promise<boolean> {
+async function confirmIfMutating(server: McpServer, route: RouteDeclaration, args: Record<string, unknown>): Promise<boolean> {
     if (!MUTATING_METHODS.includes(route.method.toLowerCase())) return true
+
+    const paramsText = Object.keys(args).length
+        ? `\n\nParameters:\n${JSON.stringify(args, null, 2)}`
+        : ''
 
     const confirmation = await server.server.elicitInput({
         mode: 'form',
-        message: `Confirm ${route.method.toUpperCase()} ${route.path}`,
+        message: `Confirm ${route.method.toUpperCase()} ${route.path}${paramsText}`,
         requestedSchema: {
             type: 'object',
             properties: {
@@ -113,8 +145,8 @@ export function buildToolCallback(server: McpServer, baseUrl: string, route: Rou
                 ...(headers as Record<string, string> | undefined),
             }
 
-            if (!await confirmIfMutating(server, route)) {
-                return { content: [{ type: 'text' as const, text: 'Action cancelled.' }] }
+            if (!await confirmIfMutating(server, route, rest)) {
+                return { content: [{ type: 'text' as const, text: 'The user choosed to cancel the tool call.' }] }
             }
 
             const result = await callRoute(baseUrl, route, rest, Object.keys(mergedHeaders).length ? mergedHeaders : undefined)
@@ -122,7 +154,7 @@ export function buildToolCallback(server: McpServer, baseUrl: string, route: Rou
         } catch (e) {
             return {
                 isError: true,
-                content: [{ type: 'text' as const, text: JSON.stringify(e.message) }]
+                content: [{ type: 'text' as const, text: JSON.stringify((e as Error).message) }]
             }
         }
     }

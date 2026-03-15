@@ -6,10 +6,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { parseArgs } from "./cli"
 
 async function main() {
-    const { spec, url: baseUrl, defaultArgs } = parseArgs(process.argv.slice(2))
+    const { spec, url: baseUrl, defaultArgs, disableMethods } = parseArgs(process.argv.slice(2))
 
     const openApi = await read(spec)
-    const routes = getRoutes(openApi)
+    const routes = getRoutes(openApi).filter(r => !disableMethods.includes(r.method.toLowerCase()))
 
     const server = new McpServer({
         name: openApi.info.title,
@@ -17,8 +17,9 @@ async function main() {
     });
 
     for (const route of routes) {
-        const tool = buildMcpTool(route)
-        server.registerTool(tool.name, tool as any, buildToolCallback(server, baseUrl, route, defaultArgs))
+        const { name, inputSchema, ...config } = buildMcpTool(route)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        server.registerTool(name, { ...config, inputSchema } as any, buildToolCallback(server, baseUrl, route, defaultArgs))
     }
     const transport = new StdioServerTransport();
     await server.connect(transport);

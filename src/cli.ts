@@ -2,6 +2,7 @@ export interface CliArgs {
     spec: string
     url: string
     defaultArgs: Record<string, unknown>
+    disableMethods: string[]
 }
 
 export function parseArgs(argv: string[]): CliArgs {
@@ -30,5 +31,9 @@ export function parseArgs(argv: string[]): CliArgs {
         }
     }
 
-    return { spec: args['spec'], url: args['url'], defaultArgs }
+    const disableMethods = args['disable-methods']
+        ? args['disable-methods'].split(',').map(m => m.trim().toLowerCase()).filter(Boolean)
+        : []
+
+    return { spec: args['spec'], url: args['url'], defaultArgs, disableMethods }
 }

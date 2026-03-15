@@ -1,6 +1,9 @@
 {
-  "name": "mcp-openapi",
+  "name": "openapi-mcpify",
   "bin": "dist/index.js",
+  "scripts": {
+    "build": "npx tsc && chmod +x dist/index.js"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",
     "@readme/openapi-parser": "^6.0.0",

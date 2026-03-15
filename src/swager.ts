@@ -11,12 +11,12 @@ function getRoutesByMethods(path: string, openAPIRoute: OpenAPIV3.PathItemObject
         .map((methodKey) => ({
             method: methodKey,
             path, 
-            operation: openAPIRoute[methodKey]
+            operation: openAPIRoute[methodKey as keyof typeof openAPIRoute] as OpenAPIV3.OperationObject
         }))
 }
 
 export function getRoutes(openAPI: OpenAPIV3.Document): RouteDeclaration[] {
     return Object.keys(openAPI.paths)
-        .map((path) => getRoutesByMethods(path, openAPI.paths[path]))
+        .map((path) => getRoutesByMethods(path, openAPI.paths[path]!))
         .flat()
 }
