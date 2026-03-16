@@ -112,8 +112,6 @@ Each route in the spec becomes one MCP tool named `{METHOD}_{path}` (e.g. `GET_p
 
 For `POST`, `PUT`, and `DELETE` routes, the server calls `server.elicitInput()` before executing the HTTP request. The client (e.g. Claude Desktop) displays a confirmation form showing the method, path, and parameters. The request is only sent if the user confirms.
 
-To skip confirmation for specific methods, use `--disable-methods`.
-
 ---
 
 ## License
